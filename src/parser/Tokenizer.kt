@@ -1,10 +1,11 @@
 package parser
 
-import exceptions.UnexpectedTokenException
 import exceptions.UnknownTokenException
 
 class Tokenizer(val str: String) {
-    companion object private val operators = setOf('+', '-', '(', ')')
+    companion object {
+        private val operators = setOf('+', '-', '(', ')')
+    }
     private var position = 0
     private var word = ""
 
