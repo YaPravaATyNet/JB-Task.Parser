@@ -21,12 +21,11 @@ class IntExpr(val num: Int, op: Char?): Expr(op) {
         return "$num"
     }
 
-    override fun print(l: Int) {
-        print(" ".repeat(l * 2))
+    override fun string(l: Int): String {
         var opStr = ""
         if (op != null) {
             opStr = "with unary operator '$op'"
         }
-        println("IntExpr($num) $opStr")
+        return " ".repeat(l * 2) + "IntExpr($num) $opStr"
     }
 }

@@ -21,11 +21,11 @@ fun goodExample(string: String) {
     println("Original expression: $string")
     val tree = Parser().parse(string)
     println("Expression from AST: ${tree.text()}")
-    tree.print()
+    println(tree.string())
     tree.accept(OptimizeVisitor())
     println()
     println("Expression after optimization: ${tree.text()}")
-    tree.print()
+    println(tree.string())
     println()
 }
 
@@ -33,8 +33,7 @@ fun badExample(string: String) {
     println("<====================================================================================================================>")
     println("Original expression: $string")
     try {
-        val tree = Parser().parse(string)
-        tree.print()
+        Parser().parse(string)
     } catch (e: Exception) {
         println("Error: ${e.message}")
     }

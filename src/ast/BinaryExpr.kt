@@ -34,10 +34,8 @@ class BinaryExpr(op: Char, var left: Expr, var right: Expr) : Expr(op) {
         return left.text() + " $op " + right.text()
     }
 
-    override fun print(l: Int) {
-        print(" ".repeat(l * 2))
-        println("BinaryExpr with operator '$op'")
-        left.print(l + 1)
-        right.print(l + 1)
+    override fun string(l: Int): String {
+        return " ".repeat(l * 2) + "BinaryExpr with operator '$op'\n" +
+                left.string(l + 1) + "\n" + right.string(l + 1)
     }
 }

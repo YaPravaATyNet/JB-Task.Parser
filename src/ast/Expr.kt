@@ -7,5 +7,5 @@ abstract class Expr(var op: Char?) {
     abstract fun accept(v: Visitor)
     abstract fun replaceChild(old: Expr, new: Expr)
     abstract fun text(): String
-    abstract fun print(l: Int = 0)
+    abstract fun string(l: Int = 0): String
 }

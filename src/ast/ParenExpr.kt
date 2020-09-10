@@ -20,13 +20,11 @@ class ParenExpr(var expr: Expr, op: Char?): Expr(op) {
         return "(${expr.text()})"
     }
 
-    override fun print(l: Int) {
-        print(" ".repeat(l * 2))
+    override fun string(l: Int): String {
         var opStr = ""
         if (op != null) {
             opStr = "with unary operator '$op'"
         }
-        println("ParenExpr $opStr")
-        expr.print(l + 1)
+        return " ".repeat(l * 2) + "ParenExpr $opStr\n" + expr.string(l + 1)
     }
 }

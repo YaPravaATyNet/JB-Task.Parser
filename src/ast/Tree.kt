@@ -14,9 +14,7 @@ class Tree(var root: Expr) : Expr(null) {
 
     override fun text() = root.text()
 
-    override fun print(l: Int) {
-        print(" ".repeat(l * 2))
-        println("Tree")
-        root.print(l + 1)
+    override fun string(l: Int): String {
+        return " ".repeat(l * 2) + "Tree\n" + root.string(l + 1)
     }
 }

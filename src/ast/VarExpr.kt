@@ -14,12 +14,11 @@ class VarExpr(val name: String, op: Char?) : Expr(op) {
         return name
     }
 
-    override fun print(l: Int) {
-        print(" ".repeat(l * 2))
+    override fun string(l: Int): String {
         var opStr = ""
         if (op != null) {
             opStr = "with unary operator '$op'"
         }
-        println("VarExpr($name) $opStr")
+        return " ".repeat(l * 2) + "VarExpr($name) $opStr"
     }
 }
