@@ -1,4 +1,7 @@
+package visitor
+
 import ast.*
+import visitor.Visitor
 import kotlin.math.abs
 
 class OptimizeVisitor : Visitor {

@@ -1,6 +1,6 @@
 package ast
 
-import Visitor
+import visitor.Visitor
 
 class BinaryExpr(op: Char, var left: Expr, var right: Expr) : Expr(op) {
     override fun accept(v: Visitor) = v.visitBinaryExpr(this)

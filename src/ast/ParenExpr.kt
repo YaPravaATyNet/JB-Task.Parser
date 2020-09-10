@@ -1,6 +1,6 @@
 package ast
 
-import Visitor
+import visitor.Visitor
 
 class ParenExpr(var expr: Expr, op: Char?): Expr(op) {
     override fun accept(v: Visitor) = v.visitParenExpr(this)

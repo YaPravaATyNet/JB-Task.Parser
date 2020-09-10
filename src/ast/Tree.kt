@@ -1,7 +1,6 @@
 package ast
 
-import Visitor
-import kotlin.system.exitProcess
+import visitor.Visitor
 
 class Tree(var root: Expr) : Expr(null) {
     override fun accept(v: Visitor) = v.visitTree(this)

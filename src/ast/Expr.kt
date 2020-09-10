@@ -1,6 +1,6 @@
 package ast
 
-import Visitor
+import visitor.Visitor
 
 abstract class Expr(var op: Char?) {
     var parent: Expr? = null

@@ -1,3 +1,5 @@
+package visitor
+
 import ast.*
 
 interface Visitor {

@@ -1,6 +1,6 @@
 package ast
 
-import Visitor
+import visitor.Visitor
 
 class IntExpr(val num: Int, op: Char?): Expr(op) {
     fun getValue(): Int {
