@@ -5,4 +5,5 @@ interface Visitor {
     fun visitVarExpr(node: VarExpr)
     fun visitParenExpr(node: ParenExpr)
     fun visitBinaryExpr(node: BinaryExpr)
+    fun visitTree(node: Tree)
 }

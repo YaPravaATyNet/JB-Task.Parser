@@ -6,17 +6,23 @@ class Parser {
     private lateinit var str: String
     private var position = 0
 
-    fun parse(string: String): Expr {
+    fun parse(string: String): Tree {
         str = string
         position = 0
-        return parseBinaryExpr()
+        val expr = parseBinaryExpr()
+        val tree = Tree(expr)
+        expr.parent = tree
+        return tree
     }
 
-    fun parseBinaryExpr(): Expr {
+    private fun parseBinaryExpr(): Expr {
         var left = parseUnaryExpr()
         while (true) {
             val op = parseSymbol('+', '-') ?: return left
             val right = parseParenExpr()
+            if (right.text() == "") {
+                throw Exception("Argument expected")
+            }
             val expr = BinaryExpr(op, left, right)
             left.parent = expr
             right.parent = expr
@@ -24,12 +30,12 @@ class Parser {
         }
     }
 
-    fun parseUnaryExpr(): Expr {
+    private fun parseUnaryExpr(): Expr {
         val op = parseSymbol('+', '-')
         return parseParenExpr(op)
     }
 
-    fun parseParenExpr(op: Char? = null): Expr {
+    private fun parseParenExpr(op: Char? = null): Expr {
         if (parseSymbol('(') != null) {
             val expr = parseBinaryExpr()
             if (parseSymbol(')') != null) {
@@ -40,16 +46,16 @@ class Parser {
                 throw Exception("No close parenthesis")
             }
         }
-        return parseAtomExpr()
+        return parseAtomExpr(op)
     }
 
-    fun parseAtomExpr(op: Char? = null): Expr {
+    private fun parseAtomExpr(op: Char? = null): Expr {
         val token = parseName()
         val num = token.toIntOrNull() ?: return VarExpr(token, op)
         return IntExpr(num, op)
     }
 
-    fun parseSymbol(vararg symbols: Char): Char? {
+    private fun parseSymbol(vararg symbols: Char): Char? {
         val symbol = checkPosition()
         if (symbol != null && symbols.contains(symbol)) {
             position++
@@ -59,38 +65,38 @@ class Parser {
         return null
     }
 
-    fun parseName(): String {
+    private fun parseName(): String {
         val start = position
         var symbol = checkPosition()
         if (tokens.contains(symbol)) {
-            throw Exception("unexpected token")
+            throw Exception("Unexpected token")
         }
         while (symbol != null && !symbol.isWhitespace()) {
-            if (symbol.isDigit() || symbol.isLetter())  {
-                position++
-                symbol = checkPosition()
-                continue
-            }
+            position++
+            symbol = checkPosition()
             if (tokens.contains(symbol)) {
                 break
             }
-            throw Exception("unknown token")
         }
         val substring = str.substring(start, position)
         skipSpace()
         return substring
     }
 
-    fun skipSpace() {
+    private fun skipSpace() {
         while (position < str.length && str[position].isWhitespace()) {
             position++
         }
     }
 
-    fun checkPosition(): Char? {
+    private fun checkPosition(): Char? {
         if (position >= str.length) {
             return null
         }
-        return str[position]
+        val symbol = str[position]
+        if (symbol.isDigit() || symbol.isLetter() || symbol.isWhitespace() || tokens.contains(symbol)) {
+            return str[position]
+        }
+        throw Exception("Unknown token")
     }
 }
