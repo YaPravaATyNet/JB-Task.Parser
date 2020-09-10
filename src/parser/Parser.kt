@@ -18,14 +18,14 @@ class Parser {
     private fun parseBinaryExpr(): Expr {
         var left = parseUnaryExpr()
         while (true) {
-            val op = tokenizer.parseSymbol('+', '-') ?:
-                if (tokenizer.checkPosition() == null || tokenizer.checkPosition() == ')')
+            val op = tokenizer.parseToken(Token.PLUS, Token.MINUS)
+                ?: if (tokenizer.isEOF() || tokenizer.nextToken() == Token.CLOSE_PAREN)
                     return left
                 else
                     throw MissOperatorException(tokenizer.str, tokenizer.position())
 
             val right = parseParenExpr()
-            val expr = BinaryExpr(op, left, right)
+            val expr = BinaryExpr(op[0], left, right)
             left.parent = expr
             right.parent = expr
             left = expr
@@ -33,14 +33,14 @@ class Parser {
     }
 
     private fun parseUnaryExpr(): Expr {
-        val op = tokenizer.parseSymbol('+', '-')
-        return parseParenExpr(op)
+        val op = tokenizer.parseToken(Token.PLUS, Token.MINUS)
+        return parseParenExpr(op?.get(0))
     }
 
     private fun parseParenExpr(op: Char? = null): Expr {
-        if (tokenizer.parseSymbol('(') != null) {
+        if (tokenizer.parseToken(Token.OPEN_PAREN) != null) {
             val expr = parseBinaryExpr()
-            if (tokenizer.parseSymbol(')') != null) {
+            if (tokenizer.parseToken(Token.CLOSE_PAREN) != null) {
                 val parenExpr = ParenExpr(expr, op)
                 expr.parent = parenExpr
                 return parenExpr
@@ -52,7 +52,11 @@ class Parser {
     }
 
     private fun parseAtomExpr(op: Char? = null): Expr {
-        val token = tokenizer.parseName()
+        val token = tokenizer.parseToken(Token.WORD) ?: if (tokenizer.isEOF())
+            throw MissIdentifierException(tokenizer.str, tokenizer.position())
+        else
+            throw UnexpectedTokenException(tokenizer.str, tokenizer.position())
+
         val num = token.toIntOrNull() ?: return VarExpr(token, op)
         return IntExpr(num, op)
     }

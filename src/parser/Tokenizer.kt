@@ -1,62 +1,79 @@
 package parser
 
-import exceptions.MissIdentifierException
 import exceptions.UnexpectedTokenException
 import exceptions.UnknownTokenException
 
 class Tokenizer(val str: String) {
-    companion object val tokens = setOf('+', '-', '(', ')')
+    companion object private val operators = setOf('+', '-', '(', ')')
     private var position = 0
+    private var word = ""
 
     fun position(): Int {
         return position
     }
 
-    fun parseSymbol(vararg symbols: Char): Char? {
-        val symbol = checkPosition()
-        if (symbol != null && symbols.contains(symbol)) {
-            position++
+    fun parseToken(vararg tokens: Token): String? {
+        val token = nextToken()
+        if (!tokens.contains(token)) {
+            return null
+        }
+        if (token == Token.WORD) {
+            position += word.length
             skipSpace()
-            return symbol
+            return word
         }
-        return null
-    }
-
-    fun parseName(): String {
-        val start = position
-        var symbol = checkPosition()
-        if (tokens.contains(symbol)) {
-            throw UnexpectedTokenException(str, position)
-        }
-        while (symbol != null && !symbol.isWhitespace()) {
-            position++
-            symbol = checkPosition()
-            if (tokens.contains(symbol)) {
-                break
-            }
-        }
-        val substring = str.substring(start, position)
-        if (substring.isEmpty()) {
-            throw MissIdentifierException(str, position)
-        }
+        val char = if (checkPosition() != null) checkPosition() else return null
+        position++
         skipSpace()
-        return substring
+        return char.toString()
     }
 
-    fun checkPosition(): Char? {
+    fun nextToken(): Token? {
+        val symbol =  checkPosition()
+        return when {
+            symbol == null -> null
+            symbol == '+' -> Token.PLUS
+            symbol == '-' -> Token.MINUS
+            symbol == '(' -> Token.OPEN_PAREN
+            symbol == ')' -> Token.CLOSE_PAREN
+            symbol.isLetter() || symbol.isDigit() -> parseWord()
+            else -> throw UnknownTokenException(str, position)
+        }
+    }
+
+    private fun parseWord(): Token {
+        val start = position
+        var end = position
+        var symbol = checkPosition()
+        while (symbol != null && !symbol.isWhitespace() && !operators.contains(symbol)) {
+            end++
+            symbol = checkPosition(end)
+        }
+        word = str.substring(start, end)
+        skipSpace()
+        return Token.WORD
+    }
+
+    private fun checkPosition(): Char? {
+        return checkPosition(position)
+    }
+
+    private fun checkPosition(position: Int): Char? {
         if (position >= str.length) {
             return null
         }
         val symbol = str[position]
-        if (symbol.isDigit() || symbol.isLetter() || symbol.isWhitespace() || tokens.contains(symbol)) {
+        if (symbol.isDigit() || symbol.isLetter() || symbol.isWhitespace() || operators.contains(symbol)) {
             return str[position]
         }
         throw UnknownTokenException(str, position)
     }
 
     private fun skipSpace() {
-        while (position < str.length && str[position].isWhitespace()) {
+        while (!isEOF() && str[position].isWhitespace()) {
             position++
         }
     }
+
+    fun isEOF(): Boolean = position >= str.length
 }
