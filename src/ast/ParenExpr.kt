@@ -9,6 +9,7 @@ class ParenExpr(var expr: Expr, op: Char? = null): Expr(op) {
         if (old != expr) {
             return
         }
+        old.parent = null
         new.parent = this
         expr = new
     }

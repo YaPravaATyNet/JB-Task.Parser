@@ -8,8 +8,9 @@ class Tree(var root: Expr) : Expr(null) {
     override fun replaceChild(old: Expr, new: Expr) {
         if (old != root)
             return
-        root = new
+        old.parent = null
         new.parent = this
+        root = new
     }
 
     override fun text() = root.text()

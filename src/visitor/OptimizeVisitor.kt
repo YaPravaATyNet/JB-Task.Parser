@@ -3,7 +3,7 @@ package visitor
 import ast.*
 import kotlin.math.abs
 
-class OptimizeVisitor : Visitor {
+open class OptimizeVisitor : Visitor {
     override fun visitIntExpr(node: IntExpr) {}
 
     override fun visitVarExpr(node: VarExpr) {}
@@ -46,7 +46,12 @@ class OptimizeVisitor : Visitor {
         }
 
         val newExpr = when {
-            (left is IntExpr && left.getValue() == 0) -> right
+            (left is IntExpr && left.getValue() == 0) -> {
+                if (node.op == '-') {
+                    right.op = '-'
+                }
+                right
+            }
             (right is IntExpr && right.getValue() == 0) -> left
             else -> return
         }
