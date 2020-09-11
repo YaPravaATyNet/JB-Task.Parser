@@ -2,7 +2,7 @@ package ast
 
 import visitor.Visitor
 
-class VarExpr(val name: String, op: Char?) : Expr(op) {
+class VarExpr(val name: String, op: Char? = null) : Expr(op) {
     override fun accept(v: Visitor) = v.visitVarExpr(this)
 
     override fun replaceChild(old: Expr, new: Expr) {}

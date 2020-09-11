@@ -1,7 +1,6 @@
 package visitor
 
 import ast.*
-import visitor.Visitor
 import kotlin.math.abs
 
 class OptimizeVisitor : Visitor {
@@ -11,7 +10,12 @@ class OptimizeVisitor : Visitor {
 
     override fun visitParenExpr(node: ParenExpr) {
         node.expr.accept(this)
-        if (node.expr !is BinaryExpr || node.parent is Tree) {
+        if (node.parent is Tree || node.expr !is BinaryExpr) {
+            node.parent?.replaceChild(node, node.expr)
+            return
+        }
+        val parent = node.parent
+        if (parent is BinaryExpr && parent.left == node) {
             node.parent?.replaceChild(node, node.expr)
         }
     }
@@ -35,6 +39,10 @@ class OptimizeVisitor : Visitor {
             val newExpr = IntExpr(abs(res), newOp)
             node.parent?.replaceChild(node, newExpr)
             return
+        }
+
+        if (left is VarExpr && right is VarExpr && left.name == right.name && node.op == '-') {
+            node.parent?.replaceChild(node, IntExpr(0))
         }
 
         val newExpr = when {

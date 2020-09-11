@@ -2,7 +2,7 @@ package ast
 
 import visitor.Visitor
 
-class IntExpr(val num: Int, op: Char?): Expr(op) {
+class IntExpr(val num: Int, op: Char? = null): Expr(op) {
     fun getValue(): Int {
         if (op == '-') {
             return -num

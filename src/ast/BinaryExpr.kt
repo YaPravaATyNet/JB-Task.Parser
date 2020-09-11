@@ -13,7 +13,7 @@ class BinaryExpr(op: Char, var left: Expr, var right: Expr) : Expr(op) {
         }
         if (right == old) {
             if (new is BinaryExpr) {
-                val paren = ParenExpr(new, null)
+                val paren = ParenExpr(new)
                 new.parent = paren
                 paren.parent = this
                 right = paren
