@@ -11,11 +11,18 @@ open class OptimizeVisitor : Visitor {
     override fun visitParenExpr(node: ParenExpr) {
         node.expr.accept(this)
         if (node.parent is Tree || node.expr !is BinaryExpr) {
+            if (node.op == '-') {
+                if (node.expr.op == '-') {
+                    node.expr.op = null
+                } else {
+                    node.expr.op = '-'
+                }
+            }
             node.parent?.replaceChild(node, node.expr)
             return
         }
         val parent = node.parent
-        if (parent is BinaryExpr && parent.left == node) {
+        if (parent is BinaryExpr && parent.left == node && node.op != '-') {
             node.parent?.replaceChild(node, node.expr)
         }
     }
@@ -43,6 +50,7 @@ open class OptimizeVisitor : Visitor {
 
         if (left is VarExpr && right is VarExpr && left.name == right.name && node.op == '-') {
             node.parent?.replaceChild(node, IntExpr(0))
+            return
         }
 
         val newExpr = when {
