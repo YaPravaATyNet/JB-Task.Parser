@@ -5,7 +5,7 @@ import java.lang.Exception
 fun main() {
     goodExample("3 + a")
     goodExample("-1 + a - 0")
-    goodExample("1-2   + (-c)")
+    goodExample("  1-2   + (-c)")
     goodExample("2 - (5 + 8) + (-2) - (a + 1)")
     goodExample("(a - a + b - c) + 1")
     goodExample("(a + (((b + c) + (-(d + e)))))")

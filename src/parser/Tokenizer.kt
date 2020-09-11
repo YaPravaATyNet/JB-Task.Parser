@@ -14,18 +14,17 @@ class Tokenizer(val str: String) {
     }
 
     fun parseToken(vararg tokens: Token): String? {
+        skipSpace()
         val token = nextToken()
         if (!tokens.contains(token)) {
             return null
         }
         if (token == Token.WORD) {
             position += word.length
-            skipSpace()
             return word
         }
         val char = if (checkPosition() != null) checkPosition() else return null
         position++
-        skipSpace()
         return char.toString()
     }
 
@@ -51,7 +50,6 @@ class Tokenizer(val str: String) {
             symbol = checkPosition(end)
         }
         word = str.substring(start, end)
-        skipSpace()
         return Token.WORD
     }
 
