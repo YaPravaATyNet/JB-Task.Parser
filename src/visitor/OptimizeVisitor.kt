@@ -4,12 +4,27 @@ import ast.*
 import kotlin.math.abs
 
 open class OptimizeVisitor : Visitor {
-    override fun visitIntExpr(node: IntExpr) {}
+    override fun visitIntExpr(node: IntExpr) {
+        if (node.getValue() == 0) {
+            node.op = null
+            return
+        }
+        if (node.op == '+') {
+            node.op = null
+        }
+    }
 
-    override fun visitVarExpr(node: VarExpr) {}
+    override fun visitVarExpr(node: VarExpr) {
+        if (node.op == '+') {
+            node.op = null
+        }
+    }
 
     override fun visitParenExpr(node: ParenExpr) {
         node.expr.accept(this)
+        if (node.op == '+') {
+            node.op = null
+        }
         if (node.parent is Tree || node.expr !is BinaryExpr) {
             if (node.op == '-') {
                 if (node.expr.op == '-') {
