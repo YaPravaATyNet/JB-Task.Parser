@@ -6,6 +6,7 @@ class Tokenizer(val str: String) {
     companion object {
         private val operators = setOf('+', '-', '(', ')')
     }
+
     private var position = 0
     private var word = ""
 
@@ -29,7 +30,7 @@ class Tokenizer(val str: String) {
     }
 
     fun nextToken(): Token? {
-        val symbol =  checkPosition()
+        val symbol = checkPosition()
         return when {
             symbol == null -> null
             symbol == '+' -> Token.PLUS

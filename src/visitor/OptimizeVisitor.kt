@@ -42,41 +42,10 @@ class OptimizeVisitor : Visitor {
     override fun visitBinaryExpr(node: BinaryExpr) {
         node.left.accept(this)
         node.right.accept(this)
-
         if (node.op != '+' && node.op != '-') {
             return
         }
-
-        val left = node.left
-        val right = node.right
-        if (left is IntExpr && right is IntExpr) {
-            val res = if (node.op == '+')
-                left.getValue() + right.getValue()
-            else
-                left.getValue() - right.getValue()
-            val newOp = if (res < 0) '-' else null
-            val newExpr = IntExpr(abs(res), newOp)
-            node.parent?.replaceChild(node, newExpr)
-            return
-        }
-
-        if (left is VarExpr && right is VarExpr && left.name == right.name && node.op == '-' &&
-                left.op != '-' && right.op != '-') {
-            node.parent?.replaceChild(node, IntExpr(0))
-            return
-        }
-
-        val newExpr = when {
-            (left is IntExpr && left.getValue() == 0) -> {
-                if (node.op == '-') {
-                    right.op = '-'
-                }
-                right
-            }
-            (right is IntExpr && right.getValue() == 0) -> left
-            else -> return
-        }
-        node.parent?.replaceChild(node, newExpr)
+        calculateInt(node) || reduceSameVar(node) || reduceZero(node)
     }
 
     override fun visitTree(node: Tree) {
@@ -87,5 +56,50 @@ class OptimizeVisitor : Visitor {
         if (node.op == '+') {
             node.op = null
         }
+    }
+
+    private fun calculateInt(node: BinaryExpr): Boolean {
+        val left = node.left
+        val right = node.right
+        if (left is IntExpr && right is IntExpr) {
+            val res = if (node.op == '+')
+                left.getValue() + right.getValue()
+            else
+                left.getValue() - right.getValue()
+            val newOp = if (res < 0) '-' else null
+            val newExpr = IntExpr(abs(res), newOp)
+            node.parent?.replaceChild(node, newExpr)
+            return true
+        }
+        return false
+    }
+
+    private fun reduceSameVar(node: BinaryExpr): Boolean {
+        val left = node.left
+        val right = node.right
+        if (left is VarExpr && right is VarExpr && left.name == right.name && node.op == '-' &&
+            left.op != '-' && right.op != '-'
+        ) {
+            node.parent?.replaceChild(node, IntExpr(0))
+            return true
+        }
+        return false
+    }
+
+    private fun reduceZero(node: BinaryExpr): Boolean {
+        val left = node.left
+        val right = node.right
+        val newExpr = when {
+            (left is IntExpr && left.getValue() == 0) -> {
+                if (node.op == '-') {
+                    right.op = '-'
+                }
+                right
+            }
+            (right is IntExpr && right.getValue() == 0) -> left
+            else -> return false
+        }
+        node.parent?.replaceChild(node, newExpr)
+        return true
     }
 }

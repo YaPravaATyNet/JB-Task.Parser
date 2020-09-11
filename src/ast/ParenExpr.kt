@@ -2,7 +2,7 @@ package ast
 
 import visitor.Visitor
 
-class ParenExpr(var expr: Expr, op: Char? = null): Expr(op) {
+class ParenExpr(var expr: Expr, op: Char? = null) : Expr(op) {
     override fun accept(v: Visitor) = v.visitParenExpr(this)
 
     override fun replaceChild(old: Expr, new: Expr) {

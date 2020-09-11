@@ -2,7 +2,7 @@ package ast
 
 import visitor.Visitor
 
-class IntExpr(val num: Int, op: Char? = null): Expr(op) {
+class IntExpr(val num: Int, op: Char? = null) : Expr(op) {
     fun getValue(): Int {
         if (op == '-') {
             return -num
@@ -12,7 +12,7 @@ class IntExpr(val num: Int, op: Char? = null): Expr(op) {
 
     override fun accept(v: Visitor) = v.visitIntExpr(this)
 
-    override fun replaceChild(old: Expr, new: Expr){}
+    override fun replaceChild(old: Expr, new: Expr) {}
 
     override fun text(): String {
         if (op != null) {
