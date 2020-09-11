@@ -3,7 +3,7 @@ package visitor
 import ast.*
 import kotlin.math.abs
 
-open class OptimizeVisitor : Visitor {
+class OptimizeVisitor : Visitor {
     override fun visitIntExpr(node: IntExpr) {
         if (node.getValue() == 0) {
             node.op = null
@@ -83,7 +83,7 @@ open class OptimizeVisitor : Visitor {
         node.root.accept(this)
     }
 
-    fun reducePlus(node: Expr) {
+    private fun reducePlus(node: Expr) {
         if (node.op == '+') {
             node.op = null
         }

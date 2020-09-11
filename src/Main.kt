@@ -14,6 +14,7 @@ fun main() {
     badExample("(3 + 2")
     badExample("a +")
     badExample("2 3")
+    badExample("(0))")
 }
 
 fun goodExample(string: String) {

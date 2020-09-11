@@ -10,6 +10,9 @@ class Parser {
     fun parse(string: String): Tree {
         tokenizer = Tokenizer(string)
         val expr = parseBinaryExpr()
+        if (!tokenizer.isEOF()) {
+            throw UnexpectedTokenException(tokenizer.str, tokenizer.position())
+        }
         val tree = Tree(expr)
         expr.parent = tree
         return tree
