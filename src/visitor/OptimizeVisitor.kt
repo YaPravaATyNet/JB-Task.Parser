@@ -9,22 +9,16 @@ open class OptimizeVisitor : Visitor {
             node.op = null
             return
         }
-        if (node.op == '+') {
-            node.op = null
-        }
+        reducePlus(node)
     }
 
     override fun visitVarExpr(node: VarExpr) {
-        if (node.op == '+') {
-            node.op = null
-        }
+        reducePlus(node)
     }
 
     override fun visitParenExpr(node: ParenExpr) {
         node.expr.accept(this)
-        if (node.op == '+') {
-            node.op = null
-        }
+        reducePlus(node)
         if (node.parent is Tree || node.expr !is BinaryExpr) {
             if (node.op == '-') {
                 if (node.expr.op == '-') {
@@ -32,6 +26,9 @@ open class OptimizeVisitor : Visitor {
                 } else {
                     node.expr.op = '-'
                 }
+            }
+            if (node.expr is IntExpr && (node.expr as IntExpr).getValue() == 0) {
+                node.expr.op = null
             }
             node.parent?.replaceChild(node, node.expr)
             return
@@ -63,7 +60,8 @@ open class OptimizeVisitor : Visitor {
             return
         }
 
-        if (left is VarExpr && right is VarExpr && left.name == right.name && node.op == '-') {
+        if (left is VarExpr && right is VarExpr && left.name == right.name && node.op == '-' &&
+                left.op != '-' && right.op != '-') {
             node.parent?.replaceChild(node, IntExpr(0))
             return
         }
@@ -83,5 +81,11 @@ open class OptimizeVisitor : Visitor {
 
     override fun visitTree(node: Tree) {
         node.root.accept(this)
+    }
+
+    fun reducePlus(node: Expr) {
+        if (node.op == '+') {
+            node.op = null
+        }
     }
 }
